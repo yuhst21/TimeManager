@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TMS </title>
+
+    <!-- Bootstrap -->
+    <link th:href="@{/views/vendors/bootstrap/dist/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link th:href="@{/views/vendors/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
+    <!-- NProgress -->
+    <link th:href="@{/views/vendors/nprogress/nprogress.css}" rel="stylesheet">
+    <!-- iCheck -->
+    <link th:href="@{/views/vendors/iCheck/skins/flat/green.css}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link th:href="@{/views/build/css/custom.min.css}" rel="stylesheet">
+</head>
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="../index.html" class="site_title"><i class="fa fa-paw"></i> <span>TMS</span></a>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- menu profile quick info -->
+
+                <!-- /menu profile quick info -->
+
+                <br/>
+
+                <!-- sidebar menu -->
+
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <h3>General</h3>
+                        <ul class="nav side-menu">
+                            <li><a><i class="fa fa-table"></i> Leave Request <span
+                                    class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a th:href="@{'/my_request'}">My Request</a></li>
+                                    <li><a th:href="@{'/create_my_request'}">Create Request</a></li>
+                                    <li><a th:if="${session.user_object.getRole().getSetting_id() eq 41 || session.user_object.getRole().getSetting_id() eq 42 }" th:href="@{'/receive_request_list'}">Received Request List</a></li>
+                                </ul>
+                            </li>
+                            <li><a><i class="fa fa-table"></i> My Report <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a th:href="@{'/my_abnormal_case'}">My Abnormal Cases</a></li>
+                                    <li><a th:href="@{'/my_early_leave_and_late_coming'}">My Late Coming & Early Leave</a></li>
+                                    <li><a th:href="@{'/my_working_time_report'}">My Working Time Report</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+
+                <!-- /sidebar menu -->
+
+                <!-- /menu footer buttons -->
+
+                <!-- /menu footer buttons -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <div class="nav toggle">
+                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                </div>
+                <nav class="nav navbar-nav">
+                    <ul class=" navbar-right">
+                        <li class="nav-item dropdown open" style="padding-left: 15px;">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
+                               id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
+                                <div th:text="${session.user_object.full_name}"></div>
+                            </a>
+                            <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
+                                <form th:action="@{/logout}">
+                                    <button class="dropdown-item" type="submit">
+                                        <i class="fa fa-sign-out pull-right"></i> Log
+                                        Out
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+            <div class="">
+                <div class="page-title">
+                    <div class="title_left">
+                        <h3><small>My Abnormal Case</small></h3>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="row" style="display: block;">
+
+                    <div class="col-md-12 col-sm-12  ">
+                        <div class="x_panel">
+                            <div class="x_title">
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+
+                                <form th:action="@{/my_abnormal_case}">
+                                    <div class="col-md-3 col-sm-2">
+                                        <p>Date From</p>
+                                        <input class="form-control date" type="date" name="date_get_start"
+                                               th:value="${date_start}" ></div>
+                                    <div class="col-md-3 col-sm-2">
+                                        <p>Date To</p>
+                                        <input class="form-control date" type="date" name="date_get_end"
+                                               th:value="${date_end}" ></div>
+                                    <div class="col-md-3 col-sm-2 ">
+                                        <p>..</p>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="leave_no_request" class="flat" th:value="50" th:checked="${leave_without_request == 50}"> Leave Without Request
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-2 ">
+                                        <p>...</p>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="work_with_approved" class="flat" th:value="51" th:checked="${work_on_approved_leave ==51}"> Working On Approved Leave
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <button style="margin-top:20px;margin-left: 92%" class="btn btn-success">
+                                            Search
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12 col-sm-12  ">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <!--Comment Site -->
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="table-responsive">
+                                    <table class="table table-striped jambo_table bulk_action">
+                                        <thead>
+                                        <tr class="headings">
+                                            <th class="column-title">Date</th>
+                                            <th class="column-title">Abnormal Type</th>
+                                            <th class="column-title">Partial Day</th>
+                                            <th class="column-title">Request Type</th>
+                                            <th class="column-title">First Entry</th>
+                                            <th class="column-title">Last Exit</th>
+                                            <th class="column-title">In Office Time(hours)</th>
+                                            <th class="column-title">In Office within working time frame(hours)</th>
+                                            <th class="column-title">In Working Area(hours)</th>
+                                            <th class="column-title no-link last"><span class="nobr">Action</span>
+                                            </th>
+                                            <th class="bulk-actions" colspan="7">
+                                                <a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions (
+                                                    <span class="action-cnt"> </span> ) <i
+                                                            class="fa fa-chevron-down"></i></a>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="even pointer" th:each="request :${abnormalReportList}">
+                                            <td th:text="${request.report.date}" th:width="100px">Date</td>
+                                            <td th:text="${request.abnormal_type.setting_title}">Abnormal Type</td>
+                                            <td th:text="${request.partial_day.setting_title}">Partial Day</td>
+                                            <td th:text="${request.report.request_type.setting_id}">Request Type</td>
+                                            <td th:text="${request.report.first_entry}">First Entry</td>
+                                            <td th:text="${request.report.last_exit}">Last Exit</td>
+                                            <td th:text="${request.report.in_office_time}">In Office Time(hours)</td>
+                                            <td th:text="${request.report.in_office_working_time_frame}">In Office Time Within Working Time Frame(hours)</td>
+                                            <td th:text="${request.report.in_working_area}">In Working Area(hours)</td>
+                                            <td >View</td>
+                                        </tr>
+
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="footer_fixed">
+                                            <td>
+                                                <form th:action="@{/my_abnormal_case}">
+                                                    <input type="hidden" th:value="${page_index}" name="page">
+                                                    <input type="hidden" th:value="${date_start}" name="date_get_start">
+                                                    <input type="hidden" th:value="${date_end}" name="date_get_end">
+                                                    <input type="hidden" th:value="${leave_without_request}" name="leave_no_request">
+                                                    <input type="hidden" th:value="${work_on_approved_leave}" name="work_with_approved">
+                                                    <select class="form-control" name="size_of_page"
+                                                            onchange="this.form.submit()">
+                                                        <option th:value="5" th:selected="${page_size == 5}">5</option>
+                                                        <option th:value="10" th:selected="${page_size == 10}">10
+                                                        </option>
+                                                        <option th:value="15" th:selected="${page_size == 15}">15
+                                                        </option>
+                                                        <option th:value="20" th:selected="${page_size == 20}">20
+                                                        </option>
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+
+                                            <td>
+                                                <a th:if="${page_index ne 1}" th:href="@{'/my_abnormal_case?date_get_start='+${date_start}+'&date_get_end='
+                                                +${date_end}+'&leave_no_request'+${leave_without_request}+'&work_with_approved'+${work_on_approved_leave}+'&size_of_page='+${page_size}+'&page=1'}">First</a>
+                                                <span th:each="i: ${#numbers.sequence(1, total_page)}">
+                                                <a th:href="@{'/my_abnormal_case?date_get_start='+${date_start}+'&date_get_end='+${date_end}
+                                                +'&leave_no_request'+${leave_without_request}+'&work_with_approved'+${work_on_approved_leave}+
+                                                '&size_of_page='+${page_size}+'&page=' + ${i}}">[[${i}]]</a>
+                                                </span>
+                                                <a th:if="${page_index < total_page}"
+                                                   th:href="@{'/my_abnormal_case?date_get_start='+${date_start}+'&date_get_end='+${date_end}
+                                                   +'&leave_no_request'+${leave_without_request}+'&work_with_approved'+${work_on_approved_leave}+
+                                                   '&size_of_page='+${page_size}+'&page=' + ${total_page}}">Last</a>
+                                                <span th:unless="${page_index < total_page}">Last</span>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+            <div class="pull-right">
+                Gentelella - Bootstrap Admin Template by <a href="">Colorlib</a>
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+
+<!-- jQuery -->
+<script th:src="@{/views/vendors/jquery/dist/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script th:src="@{/views/vendors/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+<!-- FastClick -->
+<script th:src="@{/views/vendors/fastclick/lib/fastclick.js}"></script>
+<!-- NProgress -->
+<script th:src="@{/views/vendors/nprogress/nprogress.js}"></script>
+<!-- iCheck -->
+<script th:src="@{/views/vendors/iCheck/icheck.min.js}"></script>
+
+<!-- Custom Theme Scripts -->
+<script th:src="@{/views/build/js/custom.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>TMS </title>
+        <!-- Bootstrap -->
+    </head>
+<body class="nav-md">
+<!-- sidebar menu -->
+
+<div th:fragment="navbar" id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+    <div class="menu_section">
+        <h3>General</h3>
+        <ul class="nav side-menu">
+            <li><a><i class="fa fa-table"></i> Leave Request <span
+                    class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a th:href="@{'/my_request'}">My Request</a></li>
+                    <li><a th:href="@{'/create_my_request'}">Create Request</a></li>
+                    <li><a href="">Received Request List</a></li>
+                </ul>
+            </li>
+            <li><a><i class="fa fa-table"></i> My Report <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a th:href="@{'/my_abnormal_case'}">My Abnormal Cases</a></li>
+                    <li><a th:href="@{'/my_early_leave_and_late_coming'}">My Late Coming & Early Leave</a></li>
+                    <li><a th:href="@{'/my_working_time_report'}">My Working Time Report</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+</div>
+<!-- /sidebar menu -->
+</body>
+</html>

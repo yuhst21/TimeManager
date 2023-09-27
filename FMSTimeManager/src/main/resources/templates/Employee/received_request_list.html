@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TMS </title>
+
+    <!-- Bootstrap -->
+    <link th:href="@{/views/vendors/bootstrap/dist/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link th:href="@{/views/vendors/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
+    <!-- NProgress -->
+    <link th:href="@{/views/vendors/nprogress/nprogress.css}" rel="stylesheet">
+    <!-- iCheck -->
+    <link th:href="@{/views/vendors/iCheck/skins/flat/green.css}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link th:href="@{/views/build/css/custom.min.css}" rel="stylesheet">
+
+    <!-- Autocomplete Css -->
+    <link th:href="@{/views/vendors/autocomplete/autocomplete.css}" rel="stylesheet">
+</head>
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="../index.html" class="site_title"><i class="fa fa-paw"></i> <span>TMS</span></a>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- menu profile quick info -->
+
+                <!-- /menu profile quick info -->
+
+                <br/>
+
+                <!-- sidebar menu -->
+
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <h3>General</h3>
+                        <ul class="nav side-menu">
+                            <li><a><i class="fa fa-table"></i> Leave Request <span
+                                    class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a th:href="@{'/my_request'}">My Request</a></li>
+                                    <li><a th:href="@{'/create_my_request'}">Create Request</a></li>
+                                    <li><a th:if="${session.user_object.getRole().getSetting_id() eq 41 || session.user_object.getRole().getSetting_id() eq 42 }" th:href="@{'/receive_request_list'}">Received Request List</a></li>
+                                </ul>
+                            </li>
+                            <li><a><i class="fa fa-table"></i> My Report <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a th:href="@{'/my_abnormal_case'}">My Abnormal Cases</a></li>
+                                    <li><a th:href="@{'/my_early_leave_and_late_coming'}">My Late Coming & Early Leave</a></li>
+                                    <li><a th:href="@{'/my_working_time_report'}">My Working Time Report</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <!-- /sidebar menu -->
+
+                <!-- /menu footer buttons -->
+
+                <!-- /menu footer buttons -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <div class="nav toggle">
+                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                </div>
+                <nav class="nav navbar-nav">
+                    <ul class=" navbar-right">
+                        <li class="nav-item dropdown open" style="padding-left: 15px;">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
+                               id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
+                                <div th:text="${session.user_object.full_name}"></div>
+                            </a>
+                            <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
+                                <form th:action="@{/logout}">
+                                    <button class="dropdown-item" type="submit">
+                                        <i class="fa fa-sign-out pull-right"></i> Log
+                                        Out
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+            <div class="">
+                <div class="page-title">
+                    <div class="title_left">
+                        <h3><small>Received Request List</small></h3>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="row" style="display: block;">
+
+                    <div class="col-md-12 col-sm-12  ">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2><small></small></h2>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <form th:action="@{/receive_request_list}">
+                                    <input type="hidden" th:value="${page_size}" name="size_of_page">
+
+                                    <div class="col-md-3 col-sm-2">
+                                        <p>Date From</p>
+                                        <input class="form-control date" th:value="${date_start}" type="date"
+                                               name="date_get_start"></div>
+                                    <div class="col-md-3 col-sm-2">
+                                        <p>Date To</p>
+                                        <input class="form-control date" th:value="${date_end}" type="date"
+                                               name="date_get_end"></div>
+                                    <div class="col-md-3 col-sm-2 ">
+                                        <p>Select</p>
+                                        <select class="form-control" name="typeReq">
+                                            <option value="-1">All</option>
+                                            <option th:each="req_type : ${list_request_type}"
+                                                    th:value="${req_type.getSetting_id()}"
+                                                    th:text="${req_type.setting_title}"
+                                                    th:selected="${req_type.getSetting_id()} == ${request_type}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-sm-2 ">
+                                        <p>Select</p>
+                                        <select class="form-control" name="status_get">
+                                            <option th:value="-1">All Status</option>
+                                            <option th:value="2" th:selected="${status eq 2}">Pending</option>
+                                            <option th:value="1" th:selected="${status eq 1}">Approved</option>
+                                            <option th:value="0" th:selected="${status eq 0}">Denied</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-sm-2 ">
+                                        <p style="margin-top: 20px">Requester</p>
+
+                                        <input type="hidden" id="listEmail" th:value="${listUserName}">
+                                        <div class="autocomplete" style="width:300px;">
+                                            <input type="text"  id="myInput" class="form-control" placeholder="Type 3 character to find"
+                                                   th:value="${requester_r}" name="requester">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-12 col-sm-12">
+                                        <button style="margin-top:20px;margin-left: 92%" class="btn btn-success">
+                                            Search
+                                        </button>
+
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12 col-sm-12  ">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <!--Comment Site -->
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="table-responsive">
+                                    <table class="table table-striped jambo_table bulk_action">
+                                        <thead>
+                                        <tr class="headings">
+                                            <th class="column-title">Requester</th>
+                                            <th class="column-title">Request Type</th>
+                                            <th class="column-title">Time Request</th>
+                                            <th class="column-title">Partial Days</th>
+                                            <th class="column-title">Duration (Days)</th>
+                                            <th class="column-title">Status</th>
+                                            <th class="column-title">Delegate By</th>
+                                            <th class="column-title">Delegate To</th>
+                                            <th class="column-title" th:width="100px"><span class="nobr">Action</span>
+                                            </th>
+
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="even pointer" th:each="request : ${listRequest}">
+                                            <td th:text="${request.employee.full_name}">Requester</td>
+                                            <td th:text="${request.request_type.setting_title}">Request Type</td>
+                                            <td th:text="${request.start_date}">Time Request</td>
+                                            <td th:text="${request.partital_day.setting_title}">Partial Days</td>
+                                            <td th:text="${request.duration}">Duration (Days)</td>
+                                            <td th:if="${request.status eq 1}" th:value="${request.status}"
+                                                th:text="Approved">Status
+                                            </td>
+                                            <td th:if="${request.status eq 0}" th:value="${request.status}"
+                                                th:text="Denied">Status
+                                            </td>
+                                            <td th:if="${request.status eq 2}" th:value="${request.status}"
+                                                th:text="Pending">Status
+                                            </td>
+                                            <td th:text="${request.start_date}">Delegate By</td>
+                                            <td th:text="${request.end_date}">Delegate To</td>
+                                            <td>
+                                                <form th:action="@{/receive_request_list}" method="get">
+                                                    <input type="hidden" th:value="${page_index}" name="page">
+                                                    <input type="hidden" th:value="${date_start}" name="date_get_start">
+                                                    <input type="hidden" th:value="${date_end}" name="date_get_end">
+                                                    <input type="hidden" th:value="${request_type}" name="typeReq">
+                                                    <input type="hidden" th:value="${requester_r}" name="requester">
+                                                    <input type="hidden" th:value="${status}" name="status_get">
+                                                    <input type="hidden" th:value="${page_size}" name="size_of_page">
+                                                    <select name="status_change" onchange="this.form.submit()" >
+                                                        <option th:value="'2_'+${request.getRequest_id()}" th:selected="${request.status eq 2}">Pending</option>
+                                                        <option th:value="'1_'+${request.getRequest_id()}" th:selected="${request.status eq 1}">Approved
+                                                        </option>
+                                                        <option th:value="'0_'+${request.getRequest_id()}" th:selected="${request.status eq 0}">Denied</option>
+                                                    </select>
+                                                </form>
+
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="footer_fixed">
+                                            <td>
+                                                <form th:action="@{/receive_request_list}">
+                                                    <input type="hidden" th:value="${page_index}" name="page">
+                                                    <input type="hidden" th:value="${date_start}" name="date_get_start">
+                                                    <input type="hidden" th:value="${date_end}" name="date_get_end">
+                                                    <input type="hidden" th:value="${request_type}" name="typeReq">
+                                                    <input type="hidden" th:value="${requester_r}" name="requester">
+                                                    <input type="hidden" th:value="${status}" name="status_get">
+                                                    <select class="form-control" name="size_of_page"
+                                                            onchange="this.form.submit()">
+                                                        <option th:value="5" th:selected="${page_size == 5}">5</option>
+                                                        <option th:value="10" th:selected="${page_size == 10}">10
+                                                        </option>
+                                                        <option th:value="15" th:selected="${page_size == 15}">15
+                                                        </option>
+                                                        <option th:value="20" th:selected="${page_size == 20}">20
+                                                        </option>
+                                                    </select>
+                                                </form>
+
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <a th:if="${page_index ne 1}" th:href="@{'/receive_request_list?date_get_start='+${date_start}+'&date_get_end='
+                                                +${date_end}+'&typeReq='+${request_type}+'&status_get='+${status}+'&requester='+${requester_r}+'&size_of_page='+${page_size}+'&page=1'}">First</a>
+                                                <span th:each="i: ${#numbers.sequence(1, total_page)}">
+                                                <a th:href="@{'/receive_request_list?date_get_start='+${date_start}+'&date_get_end='+${date_end}+'&typeReq='
+                                                +${request_type}+'&status_get='+${status}+'&requester='+${requester_r}+'&size_of_page='+${page_size}+'&page=' + ${i}}">[[${i}]]</a>
+                                                </span>
+                                                <a th:if="${page_index < total_page}"
+                                                   th:href="@{'/receive_request_list?date_get_start='+${date_start}+'&date_get_end='+${date_end}+'&typeReq='
+                                                   +${request_type}+'&status_get='+${status}+'&requester='+${requester_r}+'&size_of_page='+${page_size}+'&page=' + ${total_page}}">Last</a>
+                                                <span th:unless="${page_index < total_page}">Last</span>
+
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+
+
+        <!-- footer content -->
+        <footer>
+
+            <div class="pull-right">
+                Gentelella - Bootstrap Admin Template by <a href="">Colorlib</a>
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+
+<!-- jQuery -->
+<script th:src="@{/views/vendors/jquery/dist/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script th:src="@{/views/vendors/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+<!-- FastClick -->
+<script th:src="@{/views/vendors/fastclick/lib/fastclick.js}"></script>
+<!-- NProgress -->
+<script th:src="@{/views/vendors/nprogress/nprogress.js}"></script>
+<!-- iCheck -->
+<script th:src="@{/views/vendors/iCheck/icheck.min.js}"></script>
+
+<!-- Custom Theme Scripts -->
+<script th:src="@{/views/build/js/custom.min.js}"></script>
+
+<script th:inline="javascript">
+    function autocomplete(inp, arr) {
+        /*the autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values:*/
+        var currentFocus;
+        /*execute a function when someone writes in the text field:*/
+        inp.addEventListener("input", function(e) {
+            var a, b, i, val = this.value;
+            /*close any already open lists of autocompleted values*/
+            closeAllLists();
+            if (!val) { return false;}
+            currentFocus = -1;
+            /*create a DIV element that will contain the items (values):*/
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            /*append the DIV element as a child of the autocomplete container:*/
+            this.parentNode.appendChild(a);
+            /*for each item in the array...*/
+            for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substring(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong>" + arr[i].substring(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substring(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function(e) {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        /*execute a function presses a key on the keyboard:*/
+        inp.addEventListener("keydown", function(e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode == 40) {
+                /*If the arrow DOWN key is pressed,
+                increase the currentFocus variable:*/
+                currentFocus++;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode == 38) { //up
+                /*If the arrow UP key is pressed,
+                decrease the currentFocus variable:*/
+                currentFocus--;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode == 13) {
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            /*a function to classify an item as "active":*/
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            /*a function to remove the "active" class from all autocomplete items:*/
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+    }
+
+    /*An array containing all the country names in the world:*/
+    var user = [[${listUserName}]];
+
+    /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+    autocomplete(document.getElementById("myInput"), user);
+</script>
+
+</body>
+</html>

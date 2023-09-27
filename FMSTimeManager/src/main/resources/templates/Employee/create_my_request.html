@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Gentelella Alela! | </title>
+
+    <!-- Bootstrap -->
+    <link th:href="@{/views/vendors/bootstrap/dist/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link th:href="@{/views/vendors/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
+    <!-- NProgress -->
+    <link th:href="@{/views/vendors/nprogress/nprogress.css}" rel="stylesheet">
+    <!-- Modal Css -->
+    <link th:href="@{/views/vendors/modal/modal.css}" rel="stylesheet">
+    <!-- Modal Js -->
+    <script th:src="@{/views/vendors/modal/modal.js}"></script>
+    <!-- Autocomplete Css -->
+    <link th:href="@{/views/vendors/autocomplete/autocomplete.css}" rel="stylesheet">
+    <!-- Autocomplete Js -->
+    <!--<script th:src="@{/views/vendors/autocomplete/autocomplete.js}"></script>-->
+    <!-- Custom Theme Style -->
+    <link th:href="@{/views/build/css/custom.min.css}" rel="stylesheet">
+
+</head>
+
+<body class="nav-md">
+<!-- modal show -->
+<div id="modal-ticket" class="modal">
+    <div class="modal__content" id="model_content">
+        <h2>Show Ticket Remain</h2>
+        </br>
+        <form th:action="@{/get_ticket_contain}">
+            <input type="month" class="month" name="month_check" th:value="${session.year_with_month}">
+            <button type="submit" style="height: 20px;width: 30px;color: #1b6d85;margin-top: 1px">+</button>
+        </form>
+        </br>
+        </br>
+        <div th:if="${session.total_tic > 0}">
+            You can sent : [[${session.total_tic}]] ticket
+        </div>
+        <div th:if="${session.total_tic <= 0}">
+            You can't send ticket this month
+        </div>
+
+        <div th:if="${session.total_tic < 3 && session.list_request_by_month ne null}">
+                <table th:border="1">
+                    <tr>
+                        <th>Request Type</th>
+                        <th>Request Status</th>
+                        <th>Sent Date</th>
+                    </tr>
+                    <tr th:each="req : ${session.list_request_by_month}">
+                        <td th:text="${req.getRequest_type().getSetting_title()}">Request Type</td>
+                        <td th:if="${req.status eq 1}" th:value="${req.status}"
+                            th:text="Approved">Request Status
+                        </td>
+                        <td th:if="${req.status eq 0}" th:value="${req.status}"
+                            th:text="Denied">Request Status
+                        </td>
+                        <td th:if="${req.status eq 2}" th:value="${req.status}"
+                            th:text="Pending">Request Status
+                        </td>
+                        <td th:text="${req.getStart_date()}">Sent Date</td>
+                    </tr>
+                </table>
+
+
+        </div>
+
+        </br> </br>
+        <div class="modal__footer">
+            <button type="button" onclick="modal_close()" class="btn btn-danger">Cancel</button>
+        </div>
+        <a href="#" class="modal__close">&times;</a>
+    </div>
+</div>
+<!-- modal show -->
+
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="@{/views/production/index.html" class="site_title"><i class="fa fa-paw"></i>
+                        <span>Gentelella Alela!</span></a>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- menu profile quick info -->
+                <!-- /menu profile quick info -->
+
+                <br/>
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <h3>General</h3>
+                        <ul class="nav side-menu">
+                            <li><a><i class="fa fa-table"></i> Leave Request <span
+                                    class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a th:href="@{'/my_request'}">My Request</a></li>
+                                    <li><a th:href="@{'/create_my_request'}">Create Request</a></li>
+                                    <li>
+                                        <a th:if="${session.user_object.getRole().getSetting_id() eq 41 || session.user_object.getRole().getSetting_id() eq 42 }"
+                                           th:href="@{'/receive_request_list'}">Received Request List</a></li>
+                                </ul>
+                            </li>
+                            <li><a><i class="fa fa-table"></i> My Report <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a th:href="@{'/my_abnormal_case'}">My Abnormal Cases</a></li>
+                                    <li><a th:href="@{'/my_early_leave_and_late_coming'}">My Late Coming & Early
+                                        Leave</a></li>
+                                    <li><a th:href="@{'/my_working_time_report'}">My Working Time Report</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <!-- /sidebar menu -->
+
+                <!-- /menu footer buttons -->
+
+                <!-- /menu footer buttons -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <div class="nav toggle">
+                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                </div>
+                <nav class="nav navbar-nav">
+                    <ul class=" navbar-right">
+                        <li class="nav-item dropdown open" style="padding-left: 15px;">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
+                               id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
+                                <div th:text="${session.user_object.full_name}"></div>
+                            </a>
+                            <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
+                                <form th:action="@{/logout}">
+                                    <button class="dropdown-item" type="submit">
+                                        <i class="fa fa-sign-out pull-right"></i> Log
+                                        Out
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+            <div class="">
+                <div class="page-title">
+                    <div class="title_left">
+                        <h3>Create My Request</h3>
+                    </div>
+
+                    <div class="title_right">
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2><small>Create My Request</small></h2>
+                                <button style="margin-left: 70%" class="btn btn-primary" type="submit"
+                                        onclick="modal_open()">Check Ticket
+                                </button>
+                                <div class="clearfix"></div>
+
+                            </div>
+
+                            <div class="x_content">
+                                <form th:action="@{/create_my_request}" th:object="${request}" method="post" novalidate>
+                                    <table class="col-md-5">
+                                        <tr>
+                                            <td>Request Type</td>
+                                            <td>
+                                                <select class="form-control" name="req_type">
+                                                    <option
+                                                            th:each="req_type : ${listRequest}"
+                                                            th:value="${req_type.getSetting_id()}"
+                                                            th:text="${req_type.setting_title}"
+                                                    ></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Start Date</td>
+                                            <td>
+                                                <input id="pick_date" class="form-control date" type="date" name="req_start_date" onchange="cal()">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Partial Day</td>
+                                            <td>
+                                                <select class="form-control" name="req_partial">
+                                                    <option
+                                                            th:each="req_type : ${listPartialDay}"
+                                                            th:value="${req_type.getSetting_id()}"
+                                                            th:text="${req_type.setting_title}"></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Reason</td>
+                                            <td>
+                                                <select class="form-control" name="req_reason">
+                                                    <option
+                                                            th:each="req_type : ${listReason}"
+                                                            th:value="${req_type.getSetting_id()}"
+                                                            th:text="${req_type.setting_title}"
+                                                    ></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Detail Reason</td>
+                                            <td>
+                                                <textarea id="message" required="required" class="form-control"
+                                                          name="req_detail_reason" data-parsley-trigger="keyup"
+                                                          data-parsley-minlength="20" data-parsley-maxlength="100"
+                                                          data-parsley-validation-threshold="10"></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Expected Approve</td>
+                                            <td>
+                                                <input class="form-control date" type="date"
+                                                       name="req_expected_approve">
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                    <table class="col-md-2">
+
+                                    </table>
+                                    <table class="col-md-5">
+                                        <tr>
+                                            <td>End Date</td>
+                                            <td>
+                                                <input id="drop_date" class="form-control date" type="date" name="req_end_date" onchange="cal()">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Duration</td>
+                                            <td>
+                                                <input type="text" id="numdays2" name="req_duration" readonly>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>Approver</td>
+                                            <td>
+                                                <select class="form-control" name="req_appover">
+                                                    <option
+                                                            th:each="req_user : ${listApprover}"
+                                                            th:value="${req_user.user_id}"
+                                                            th:text="${req_user.full_name}"
+                                                    ></option>
+
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Supervisor</td>
+                                            <td>
+                                                <select class="form-control" name="req_supervisor">
+                                                    <option
+                                                            th:each="req_user : ${listSuppervisor}"
+                                                            th:value="${req_user.user_id}"
+                                                            th:text="${req_user.full_name}"
+                                                    ></option>
+
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Inform To</td>
+                                            <td>
+                                                <input type="hidden" id="listEmail" th:value="${listEmailByRole}">
+                                                <div class="autocomplete" style="width:300px;">
+                                                    <input class="form-control" id="myInput" type="text" name="req_inform_to" placeholder="Enter email character">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Time</td>
+                                            <td>
+                                                <input class="form-control time" type="time" name="req_time">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <table class="col-md-12">
+                                        <tr>
+                                            <td>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="col-md-3" style="margin-left: 70%">
+                                        <tr>
+                                            <td>
+                                                <button type="submit" class="btn btn-success">Send</button>
+                                                [[${send}]]
+                                            </td>
+
+                                        </tr>
+                                    </table>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+            <div class="pull-right">
+                Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="@{/views/vendors/validator/multifield.js"></script>
+<script src="@{/views/vendors/validator/validator.js"></script>
+
+<!-- Javascript functions	-->
+<script>
+    function hideshow() {
+        var password = document.getElementById("password1");
+        var slash = document.getElementById("slash");
+        var eye = document.getElementById("eye");
+
+        if (password.type === 'password') {
+            password.type = "text";
+            slash.style.display = "block";
+            eye.style.display = "none";
+        } else {
+            password.type = "password";
+            slash.style.display = "none";
+            eye.style.display = "block";
+        }
+
+    }
+</script>
+
+<script>
+    // initialize a validator instance from the "FormValidator" constructor.
+    // A "<form>" element is optionally passed as an argument, but is not a must
+    var validator = new FormValidator({
+        "events": ['blur', 'input', 'change']
+    }, document.forms[0]);
+    // on form "submit" event
+    document.forms[0].onsubmit = function (e) {
+        var submit = true,
+            validatorResult = validator.checkAll(this);
+        console.log(validatorResult);
+        return !!validatorResult.valid;
+    };
+    // on form "reset" event
+    document.forms[0].onreset = function (e) {
+        validator.reset();
+    };
+    // stuff related ONLY for this demo page:
+    $('.toggleValidationTooltips').change(function () {
+        validator.settings.alerts = !this.checked;
+        if (this.checked)
+            $('form .alert').remove();
+    }).prop('checked', false);
+
+</script>
+<script >
+    function GetDays(){
+        var dropdt = new Date(document.getElementById("drop_date").value);
+        var pickdt = new Date(document.getElementById("pick_date").value);
+        return parseInt((dropdt - pickdt) / (24 * 3600 * 1000));
+    }
+    function cal(){
+        if(document.getElementById("drop_date")){
+            document.getElementById("numdays2").value=GetDays();
+        }
+    }
+
+</script>
+
+
+<script th:inline="javascript">
+    function autocomplete(inp, arr) {
+        /*the autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values:*/
+        var currentFocus;
+        /*execute a function when someone writes in the text field:*/
+        inp.addEventListener("input", function(e) {
+            var a, b, i, val = this.value;
+            /*close any already open lists of autocompleted values*/
+            closeAllLists();
+            if (!val) { return false;}
+            currentFocus = -1;
+            /*create a DIV element that will contain the items (values):*/
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            /*append the DIV element as a child of the autocomplete container:*/
+            this.parentNode.appendChild(a);
+            /*for each item in the array...*/
+            for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substring(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong>" + arr[i].substring(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substring(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function(e) {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        /*execute a function presses a key on the keyboard:*/
+        inp.addEventListener("keydown", function(e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode == 40) {
+                /*If the arrow DOWN key is pressed,
+                increase the currentFocus variable:*/
+                currentFocus++;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode == 38) { //up
+                /*If the arrow UP key is pressed,
+                decrease the currentFocus variable:*/
+                currentFocus--;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode == 13) {
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            /*a function to classify an item as "active":*/
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            /*a function to remove the "active" class from all autocomplete items:*/
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+    }
+
+    /*An array containing all the country names in the world:*/
+    var user = [[${listEmailByRole}]];
+
+    /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+    autocomplete(document.getElementById("myInput"), user);
+</script>
+
+<!-- jQuery -->
+<script th:src="@{/views/vendors/jquery/dist/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script th:src="@{/views/vendors/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+<!-- FastClick -->
+<script th:src="@{/views/vendors/fastclick/lib/fastclick.js}"></script>
+<!-- NProgress -->
+<script th:src="@{/views/vendors/nprogress/nprogress.js}"></script>
+<!-- validator -->
+<!-- <script src="../vendors/validator/validator.js"></script> -->
+
+<!-- Custom Theme Scripts -->
+<script th:src="@{/views/build/js/custom.min.js}"></script>
+
+</body>
+
+</html>
